@@ -39,9 +39,9 @@ public class DeviceAdmin {
 		properties.load(in);
 		in.close();
 
-		int nrOfGroups = Integer.valueOf(properties.getProperty("api-key", "0"));
-		int nrOfCars = Integer.valueOf(properties.getProperty("api-key", "0"));
-		int nrOfAmbulances = Integer.valueOf(properties.getProperty("api-key", "0"));
+		int nrOfGroups = Integer.valueOf(properties.getProperty("nr.of.groups", "0"));
+		int nrOfCars = Integer.valueOf(properties.getProperty("nr.of.cars", "0"));
+		int nrOfAmbulances = Integer.valueOf(properties.getProperty("nr.of.ambulances", "0"));
 
 		List<TypedDeviceConfig> configList = new ArrayList<TypedDeviceConfig>();
 		List<TypedDeviceConfig> ambulances = new ArrayList<TypedDeviceConfig>();
