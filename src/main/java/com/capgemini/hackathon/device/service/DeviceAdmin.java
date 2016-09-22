@@ -1,7 +1,11 @@
 package com.capgemini.hackathon.device.service;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+
+import org.apache.http.util.Asserts;
 
 import com.capgemini.hackathon.device.simulation.bo.Ambulance;
 import com.capgemini.hackathon.device.simulation.bo.Car;
@@ -13,14 +17,39 @@ public class DeviceAdmin {
 	private DeviceManagementFacade service;
 
 	public static void main(String... args) throws Exception {
-		DeviceAdmin admin = new DeviceAdmin("8dvn9v", "a-8dvn9v-xqotuspgl3", "p@kskQtrbc(q-ONXTJ");
+
+		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties");
+
+		Properties properties = new Properties();
+		properties.load(in);
+		in.close();
+
+		String ioTApiKey = properties.getProperty("api-key", null);
+		String ioTApiToken = properties.getProperty("api-token", null);
+		String orgaid = properties.getProperty("orga-id", null);
+
+		Asserts.notNull(ioTApiKey, "API Key for IoT not available");
+		Asserts.notNull(ioTApiToken, "API Token for IoT not available");
+		Asserts.notNull(orgaid, "Organization Id for IoT not availble");
+
+		DeviceAdmin admin = new DeviceAdmin(orgaid, ioTApiKey, ioTApiToken);
+
+		in = Thread.currentThread().getContextClassLoader().getResourceAsStream("admin.properties");
+		properties = new Properties();
+		properties.load(in);
+		in.close();
+
+		int nrOfGroups = Integer.valueOf(properties.getProperty("api-key", "0"));
+		int nrOfCars = Integer.valueOf(properties.getProperty("api-key", "0"));
+		int nrOfAmbulances = Integer.valueOf(properties.getProperty("api-key", "0"));
 
 		List<TypedDeviceConfig> configList = new ArrayList<TypedDeviceConfig>();
 		List<TypedDeviceConfig> ambulances = new ArrayList<TypedDeviceConfig>();
 
-		for (int i = 0; i < 2; i++) {
-			List<TypedDeviceConfig> carList = admin.createCarDevices("group" + i, (i + 1) * 100, 2);
-			List<TypedDeviceConfig> ambulanceList = admin.createAmbulanceDevices("group" + i, (i + 1) + 100, 2);
+		for (int i = 0; i < nrOfGroups; i++) {
+			List<TypedDeviceConfig> carList = admin.createCarDevices("group" + i, (i + 1) * 100, nrOfCars);
+			List<TypedDeviceConfig> ambulanceList = admin.createAmbulanceDevices("group" + i, (i + 1) + 100,
+					nrOfAmbulances);
 			configList.addAll(carList);
 			configList.addAll(ambulanceList);
 			ambulances.addAll(ambulanceList);
