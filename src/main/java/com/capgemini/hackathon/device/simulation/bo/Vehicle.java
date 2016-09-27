@@ -1,6 +1,5 @@
 package com.capgemini.hackathon.device.simulation.bo;
 
-import com.capgemini.hackathon.device.simulation.ApplicationClientConfig;
 import com.capgemini.hackathon.device.simulation.DeviceClientConfig;
 import com.capgemini.hackathon.device.simulation.model.Location;
 import com.capgemini.hackathon.device.simulation.model.VehicleLocation;
@@ -14,30 +13,30 @@ public abstract class Vehicle extends Simulation {
 
 	// How close the vehicles reach their destination
 	protected final static double distlatLong = 0.00005;
+	private static final Double DEFAULT_SPEED = 0.000004;
 
 	// The steps driving the vehicles per iteration
-	protected final static double driveSteps = Double.valueOf(System.getenv("SPEED"));
+	protected final static double driveSteps = Vehicle.getSpeed();
 
 	// current Location
 	protected Location currentLocation;
 	protected Location destination;
 
-	public Vehicle(DeviceClientConfig deviceClientConfig, ApplicationClientConfig appClientConfig, Location location) {
-		super(deviceClientConfig, appClientConfig);
+	public Vehicle(DeviceClientConfig deviceClientConfig, Location location, Object id) {
+		super(deviceClientConfig, id);
 		this.currentLocation = location;
 	}
 
-	public Vehicle(DeviceClientConfig deviceClientConfig, ApplicationClientConfig appClientConfig) {
-		this(deviceClientConfig, appClientConfig, Location.createRandomLocation());
+	public Vehicle(DeviceClientConfig deviceClientConfig, Object id) {
+		this(deviceClientConfig, Location.createRandomLocation(), id);
 	}
 
 	protected void publishLocation() {
 		try {
 
 			VehicleLocation vl = new VehicleLocation(currentLocation.getLatitude(), currentLocation.getLongitude(),
-					getGroup(), getVin());
+					getId().toString());
 			JsonObject event = vl.asJson();
-
 			addMetainformationWhenPublishLocation(event);
 			// Publish event to IoT
 			getDeviceClient().publishEvent(VehicleLocation.EVENT, event, 1);
@@ -47,12 +46,12 @@ public abstract class Vehicle extends Simulation {
 
 	}
 
-	protected String getVin() {
-		return getDeviceClient().getDeviceId();
+	public Location getCurrentLocation() {
+		return currentLocation;
 	}
 
-	protected String getGroup() {
-		return getDeviceClient().getDeviceType().split("-")[1];
+	public Location getDestination() {
+		return destination;
 	}
 
 	protected abstract void addMetainformationWhenPublishLocation(JsonObject event);
@@ -128,6 +127,15 @@ public abstract class Vehicle extends Simulation {
 			return false;
 		}
 
+	}
+
+	public static double getSpeed() {
+		String speed = System.getenv("SPEED");
+		if (speed != null) {
+			return Double.valueOf(speed);
+		} else {
+			return DEFAULT_SPEED;
+		}
 	}
 
 }

@@ -13,17 +13,17 @@ public class Emergency {
 	private static final String AMBULANCE = "vin";
 
 	private Status status = Status.OPEN;
-	private Ambulance ambulance;
+	private String ambulanceVin;
 	private String emergencyId;
 	private String groupId;
 	private Location location;
 
-	public Ambulance getAmbulance() {
-		return ambulance;
+	public String getAmbulanceVin() {
+		return ambulanceVin;
 	}
 
-	public void setAmbulance(Ambulance ambulance) {
-		this.ambulance = ambulance;
+	public void setAmbulanceVin(String ambulanceVin) {
+		this.ambulanceVin = ambulanceVin;
 	}
 
 	public Status getStatus() {
@@ -65,10 +65,7 @@ public class Emergency {
 		json.addProperty(LONGITUDE, this.location.getLongitude());
 		json.addProperty(STATUS, status.toString());
 		json.addProperty(GROUP_ID, this.groupId);
-
-		if (status != Status.OPEN) {
-			json.add(AMBULANCE, this.ambulance.asJson());
-		}
+		json.addProperty(AMBULANCE, this.ambulanceVin);
 
 		return json;
 	}
@@ -81,7 +78,7 @@ public class Emergency {
 		emergency.setStatus(Status.valueOf(json.get(STATUS).getAsString()));
 
 		if (emergency.getStatus() != Status.OPEN) {
-			emergency.setAmbulance(Ambulance.createAmbulance(json.get(AMBULANCE).getAsJsonObject()));
+			emergency.setAmbulanceVin(json.get(AMBULANCE).getAsString());
 		}
 
 		return emergency;

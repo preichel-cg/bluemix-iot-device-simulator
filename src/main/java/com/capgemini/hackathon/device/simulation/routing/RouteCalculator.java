@@ -15,25 +15,26 @@ import com.graphhopper.routing.util.EncodingManager;
 public class RouteCalculator {
 
 	private static final RouteCalculator INSTANCE = new RouteCalculator();
-	
+
 	private GraphHopper engine = new GraphHopper();
-	
-	public static RouteCalculator getInstance(){
+
+	public static RouteCalculator getInstance() {
 		return INSTANCE;
 	}
-	
-	public RouteCalculator(){
-		
+
+	public RouteCalculator() {
+
+	}
+
+	public void init() {
 		// Set the location of graphhopper files
-		engine.setGraphHopperLocation("maps");		
+		engine.setGraphHopperLocation("maps");
 		engine.setEncodingManager(new EncodingManager("car"));
 
 		// now this can take minutes if it imports or a few seconds for loading
 		// of course this is dependent on the area you import
 		engine.importOrLoad();
 	}
-
-
 
 	/**
 	 * This method calculates the route between start and end position
@@ -48,12 +49,12 @@ public class RouteCalculator {
 	 *            longitude of destination
 	 */
 	public GHResponse calculateRoute(double latFrom, double lonFrom, double latTo, double lonTo) {
-		
+
 		// create a request object
 		GHRequest req = new GHRequest(latFrom, lonFrom, latTo, lonTo).setWeighting("fastest").setVehicle("car")
 				.setLocale(Locale.UK);
 		GHResponse rsp = engine.route(req);
-	
+
 		return rsp;
 
 	}

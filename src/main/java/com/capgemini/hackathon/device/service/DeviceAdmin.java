@@ -39,23 +39,16 @@ public class DeviceAdmin {
 		properties.load(in);
 		in.close();
 
-		int nrOfGroups = Integer.valueOf(properties.getProperty("nr.of.groups", "0"));
+		String groupname = properties.getProperty("group.name", "nogroup");
 		int nrOfCars = Integer.valueOf(properties.getProperty("nr.of.cars", "0"));
 		int nrOfAmbulances = Integer.valueOf(properties.getProperty("nr.of.ambulances", "0"));
 
 		List<TypedDeviceConfig> configList = new ArrayList<TypedDeviceConfig>();
-		List<TypedDeviceConfig> ambulances = new ArrayList<TypedDeviceConfig>();
-
-		for (int i = 0; i < nrOfGroups; i++) {
-			List<TypedDeviceConfig> carList = admin.createCarDevices("group" + i, (i + 1) * 100, nrOfCars);
-			List<TypedDeviceConfig> ambulanceList = admin.createAmbulanceDevices("group" + i, (i + 1) + 100,
-					nrOfAmbulances);
-			configList.addAll(carList);
-			configList.addAll(ambulanceList);
-			ambulances.addAll(ambulanceList);
-
-		}
-		configList.add(admin.createHospital(ambulances));
+		List<TypedDeviceConfig> carList = admin.createCarDevices(groupname, nrOfCars);
+		List<TypedDeviceConfig> ambulanceList = admin.createAmbulanceDevices(groupname, nrOfAmbulances);
+		configList.addAll(carList);
+		configList.addAll(ambulanceList);
+		configList.add(admin.createHospital());
 
 		Gson gson = new Gson();
 		String jsonConfig = gson.toJson(configList);
@@ -69,56 +62,56 @@ public class DeviceAdmin {
 		service = new DeviceManagementFacade(orgId, apiKey, apiToken);
 	}
 
-	public List<TypedDeviceConfig> createCarDevices(String groupname, int vinoffset, int nr) throws Exception {
+	public List<TypedDeviceConfig> createCarDevices(String groupname,  int nr) throws Exception {
 		String carTypeId = "car-" + groupname;
 		List<TypedDeviceConfig> configList = new ArrayList<TypedDeviceConfig>(nr);
 
 		service.createDeviceType(carTypeId, "car for group " + groupname);
 		for (int i = 0; i < nr; i++) {
-			DeviceConfig config = service.createDevice(carTypeId, "car" + vinoffset + i, true);
-			configList.add(new TypedDeviceConfig(config, Car.class));
+			DeviceConfig config = service.createDevice(carTypeId, "car" + i, true);
+			configList.add(new TypedDeviceConfig(config, Car.class,"car" + i));
 		}
 		return configList;
 	}
 
-	public List<TypedDeviceConfig> createAmbulanceDevices(String groupname, int vinoffset, int nr) throws Exception {
+	public List<TypedDeviceConfig> createAmbulanceDevices(String groupname, int nr) throws Exception {
 		String ambulanceTypeId = "ambulance-" + groupname;
 		List<TypedDeviceConfig> configList = new ArrayList<TypedDeviceConfig>(nr);
 
 		service.createDeviceType(ambulanceTypeId, "ambulance for group " + groupname);
 		for (int i = 0; i < nr; i++) {
-			DeviceConfig config = service.createDevice(ambulanceTypeId, "ambulance" + vinoffset + i, true);
-			configList.add(new TypedDeviceConfig(config, Ambulance.class));
+			DeviceConfig config = service.createDevice(ambulanceTypeId, "ambulance" + i, true);
+			configList.add(new TypedDeviceConfig(config, Ambulance.class, "ambulance" + i));
 		}
 
 		return configList;
 	}
 
-	private TypedDeviceConfig createHospital(List<TypedDeviceConfig> ambulances) throws Exception {
+	private TypedDeviceConfig createHospital() throws Exception {
 		service.createDeviceType("hospital", "Hospital device which shares information to all groups");
 		DeviceConfig config = service.createDevice("hospital", "hospital1", true);
-		String hopsitalJson = (new Gson().toJson(config));
-		config.setMetadata(new Gson().toJson(ambulances));
-
-		for (TypedDeviceConfig ambulance : ambulances) {
-			ambulance.setMetadata(hopsitalJson);
-		}
-
-		return new TypedDeviceConfig(config, Hospital.class);
+		return new TypedDeviceConfig(config, Hospital.class, "hospital");
 	}
 
 	private static final class TypedDeviceConfig extends DeviceConfig {
 
 		private String simulatorClazz;
+		private String id;
 
-		public TypedDeviceConfig(DeviceConfig config, Class<?> simulatorClazz) {
+		public TypedDeviceConfig(DeviceConfig config, Class<?> simulatorClazz, String id) {
 			super(config);
 			this.simulatorClazz = simulatorClazz.getName();
+			this.id = id;
 		}
 
 		@SuppressWarnings("unused")
 		public String getSimulatorClazz() {
 			return simulatorClazz;
+		}
+
+		@SuppressWarnings("unused")
+		public String getId() {
+			return id;
 		}
 	}
 }

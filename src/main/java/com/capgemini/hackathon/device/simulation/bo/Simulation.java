@@ -2,26 +2,18 @@ package com.capgemini.hackathon.device.simulation.bo;
 
 import java.util.concurrent.Callable;
 
-import com.capgemini.hackathon.device.simulation.ApplicationClientConfig;
 import com.capgemini.hackathon.device.simulation.DeviceClientConfig;
-import com.ibm.iotf.client.app.ApplicationClient;
 import com.ibm.iotf.client.device.DeviceClient;
 
 public abstract class Simulation implements Callable<String> {
 
 	private DeviceClient deviceClient;
-	private ApplicationClient applicationClient;
-
 	private DeviceClientConfig deviceConfig;
-	private ApplicationClientConfig appConfig;
+	private Object id;
 
-	public Simulation(DeviceClientConfig deviceClientConfig, ApplicationClientConfig appClientConfig) {
+	public Simulation(DeviceClientConfig deviceClientConfig, Object id) {
 		this.deviceConfig = deviceClientConfig;
-		this.appConfig = appClientConfig;
-	}
-
-	public Simulation(DeviceClientConfig deviceClientConfig) {
-		this(deviceClientConfig, null);
+		this.id = id;
 	}
 
 	public void connect() {
@@ -30,10 +22,7 @@ public abstract class Simulation implements Callable<String> {
 			// Connect to Internet of Things Foundation
 			deviceClient.connect();
 			configureDeviceClient(deviceClient);
-
-			applicationClient = new ApplicationClient(appConfig.asProperties());
-			applicationClient.connect();
-			configureAppplicationClient(applicationClient);
+			BORegistry.getInstance().register(this);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -42,15 +31,16 @@ public abstract class Simulation implements Callable<String> {
 
 	public void disconnect() {
 		deviceClient.disconnect();
-		applicationClient.disconnect();
+
+		BORegistry.getInstance().unregister(this);
 	}
 
 	public DeviceClient getDeviceClient() {
 		return deviceClient;
 	}
 
-	public ApplicationClient getApplicationClient() {
-		return applicationClient;
+	public Object getId() {
+		return id;
 	}
 
 	public String call() {
@@ -65,7 +55,5 @@ public abstract class Simulation implements Callable<String> {
 	protected abstract void process();
 
 	protected abstract void configureDeviceClient(DeviceClient deviceClient);
-
-	protected abstract void configureAppplicationClient(ApplicationClient applicationClient);
 
 }
