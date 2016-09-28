@@ -28,12 +28,13 @@ public class RouteCalculator {
 
 	public void init() {
 		// Set the location of graphhopper files
-		engine.setGraphHopperLocation("maps");
+		engine.setGraphHopperLocation(Thread.currentThread().getContextClassLoader().getResource("maps").getPath());
 		engine.setEncodingManager(new EncodingManager("car"));
 
 		// now this can take minutes if it imports or a few seconds for loading
 		// of course this is dependent on the area you import
 		engine.importOrLoad();
+		System.out.println("GraphHopper initialized");
 	}
 
 	/**

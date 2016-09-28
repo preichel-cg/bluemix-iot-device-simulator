@@ -12,15 +12,15 @@ public abstract class Vehicle extends Simulation {
 	private static final Interruption FALSE_INTERRUPTION = new Vehicle.FalseInterruption();
 
 	// How close the vehicles reach their destination
-	protected final static double distlatLong = 0.00005;
-	private static final Double DEFAULT_SPEED = 0.000004;
-
+	private static final double DIST_LAT_LONG = 0.00005;
+	private static final double DEFAULT_SPEED = 0.000004;
 	// The steps driving the vehicles per iteration
-	protected final static double driveSteps = Vehicle.getSpeed();
+	private final static double SPEED = Vehicle.getSpeed();
 
 	// current Location
-	protected Location currentLocation;
-	protected Location destination;
+	private Location currentLocation;
+	// destination Location
+	private Location destination;
 
 	public Vehicle(DeviceClientConfig deviceClientConfig, Location location, Object id) {
 		super(deviceClientConfig, id);
@@ -40,6 +40,7 @@ public abstract class Vehicle extends Simulation {
 			addMetainformationWhenPublishLocation(event);
 			// Publish event to IoT
 			getDeviceClient().publishEvent(VehicleLocation.EVENT, event, 1);
+			System.out.println(event);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -79,28 +80,33 @@ public abstract class Vehicle extends Simulation {
 				double distLong = currentLocation.getLongitude() - nextpointLongitude;
 
 				// While the difference is bigger than the threshold x
-				while (!interruption.interrupt()
-						&& (Math.abs(distLat) > distlatLong || Math.abs(distLong) > distlatLong)) {
+				while ((Math.abs(distLat) > DIST_LAT_LONG || Math.abs(distLong) > DIST_LAT_LONG)) {
 					// check if we have to move in lat direction
-					if (Math.abs(distLat) > distlatLong) {
+					if (Math.abs(distLat) > DIST_LAT_LONG) {
 						// go xxx steps in direction
 						if (distLat < 0) {
-							currentLocation.setLatitude(currentLocation.getLatitude() + driveSteps);
+							currentLocation.setLatitude(currentLocation.getLatitude() + SPEED);
 						} else {
-							currentLocation.setLatitude(currentLocation.getLatitude() - driveSteps);
+							currentLocation.setLatitude(currentLocation.getLatitude() - SPEED);
 						}
 					}
 					// check if we have to move in long direction
-					if (Math.abs(distLong) > distlatLong) {
+					if (Math.abs(distLong) > DIST_LAT_LONG) {
 						if (distLong < 0) {
-							currentLocation.setLongitude(currentLocation.getLongitude() + driveSteps);
+							currentLocation.setLongitude(currentLocation.getLongitude() + SPEED);
 						} else {
-							currentLocation.setLongitude(currentLocation.getLongitude() - driveSteps);
+							currentLocation.setLongitude(currentLocation.getLongitude() - SPEED);
 						}
 					}
 
 					try {
 						this.publishLocation();
+
+						if (interruption.interrupt()) {
+							System.out.println("Driving interrupted");
+							return;
+						}
+
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

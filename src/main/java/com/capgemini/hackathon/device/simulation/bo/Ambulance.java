@@ -58,10 +58,15 @@ public class Ambulance extends Vehicle {
 	private class EmergencyCommandHandler implements Interruption {
 
 		private Emergency emergency;
+		private boolean interrupt = false;
 
 		@Override
 		public boolean interrupt() {
-			return this.emergency != null;
+			if(interrupt){
+				interrupt = false;
+				return true;
+			}
+			return false;
 		}
 
 		public Emergency getEmergency() {
@@ -74,6 +79,7 @@ public class Ambulance extends Vehicle {
 
 		public void emergency(Emergency emergency) {
 			this.emergency = emergency;
+			this.interrupt = true;
 		}
 
 		public boolean isFree() {

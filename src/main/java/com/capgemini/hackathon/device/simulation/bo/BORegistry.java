@@ -32,6 +32,7 @@ public class BORegistry {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T extends Simulation> T getBoById(Object id, Class<T> clazz) {
 		Map<Object, Simulation> simulations = bos.get(clazz);
 
