@@ -80,6 +80,7 @@ public abstract class Vehicle extends Simulation {
 				double distLong = currentLocation.getLongitude() - nextpointLongitude;
 
 				// While the difference is bigger than the threshold x
+				int j = 0;
 				while ((Math.abs(distLat) > DIST_LAT_LONG || Math.abs(distLong) > DIST_LAT_LONG)) {
 					// check if we have to move in lat direction
 					if (Math.abs(distLat) > DIST_LAT_LONG) {
@@ -100,6 +101,8 @@ public abstract class Vehicle extends Simulation {
 					}
 
 					try {
+						
+						if (j % 2 == 0)
 						this.publishLocation();
 
 						if (interruption.interrupt()) {
@@ -112,6 +115,8 @@ public abstract class Vehicle extends Simulation {
 					}
 					distLat = currentLocation.getLatitude() - nextPointLatitude;
 					distLong = currentLocation.getLongitude() - nextpointLongitude;
+					
+					j++;
 
 				}
 				currentLocation.setLatitude(nextPointLatitude);
