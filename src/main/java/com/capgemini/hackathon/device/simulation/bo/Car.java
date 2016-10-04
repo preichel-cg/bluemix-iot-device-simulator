@@ -15,6 +15,7 @@ public class Car extends Vehicle {
 	public void process() {
 		while (true) {
 			driveToDestination(Location.createRandomLocation());
+			
 		}
 
 	}

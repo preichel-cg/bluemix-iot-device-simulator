@@ -29,7 +29,6 @@ public class Ambulance extends Vehicle {
 						+ commandHandler.getEmergency().getEmergencyId() + " reached");
 				solveEmergency();
 			}
-
 		}
 
 	}
