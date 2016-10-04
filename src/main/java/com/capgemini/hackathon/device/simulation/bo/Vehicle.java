@@ -13,7 +13,7 @@ public abstract class Vehicle extends Simulation {
 
 	// How close the vehicles reach their destination
 	private static final double DIST_LAT_LONG = 0.00005;
-	private static final double DEFAULT_SPEED = 0.000004;
+	private static final double DEFAULT_SPEED = 0.00005;
 	// The steps driving the vehicles per iteration
 	private final static double SPEED = Vehicle.getSpeed();
 
@@ -40,7 +40,7 @@ public abstract class Vehicle extends Simulation {
 			addMetainformationWhenPublishLocation(event);
 			// Publish event to IoT
 			getDeviceClient().publishEvent(VehicleLocation.EVENT, event, 1);
-			System.out.println(event);
+			//System.out.println(event);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

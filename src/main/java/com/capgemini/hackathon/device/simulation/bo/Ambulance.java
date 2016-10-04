@@ -21,6 +21,7 @@ public class Ambulance extends Vehicle {
 			if (!commandHandler.interrupt()) {
 				driveToDestination(Location.createRandomLocation(), commandHandler);
 			} else {
+				commandHandler.setInterrupt(false);
 				System.out.println(
 						"Ambulance " + getId() + ": Emergency" + commandHandler.getEmergency().getEmergencyId());
 				driveToDestination(commandHandler.getEmergency().getLocation());
@@ -63,7 +64,7 @@ public class Ambulance extends Vehicle {
 		@Override
 		public boolean interrupt() {
 			if(interrupt){
-				interrupt = false;
+				//interrupt = false;
 				return true;
 			}
 			return false;
@@ -73,6 +74,11 @@ public class Ambulance extends Vehicle {
 			return emergency;
 		}
 
+		public void setInterrupt(boolean interrupt){
+			this.interrupt = interrupt;
+		}
+		
+		
 		public void reset() {
 			emergency = null;
 		}

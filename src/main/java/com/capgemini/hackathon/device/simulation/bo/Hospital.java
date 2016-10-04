@@ -46,7 +46,7 @@ public class Hospital extends Simulation {
 		while (true) {
 			try {
 				Thread.sleep(2000);
-				System.out.println("Check for emergencies");
+				//System.out.println("Check for emergencies");
 				synchronized (emergencies) {
 					for (Emergency emergency : emergencies) {
 						publishEmergency(emergency);
