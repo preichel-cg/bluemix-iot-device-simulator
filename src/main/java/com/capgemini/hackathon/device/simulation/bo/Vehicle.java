@@ -1,5 +1,7 @@
 package com.capgemini.hackathon.device.simulation.bo;
 
+import org.joda.time.DateTime;
+
 import com.capgemini.hackathon.device.simulation.DeviceClientConfig;
 import com.capgemini.hackathon.device.simulation.model.Location;
 import com.capgemini.hackathon.device.simulation.model.VehicleLocation;
@@ -13,9 +15,9 @@ public abstract class Vehicle extends Simulation {
 
 	// How close the vehicles reach their destination
 	private static final double DIST_LAT_LONG = 0.00005;
-	private static final double DEFAULT_SPEED = 0.00005;
+	private static final double DEFAULT_SPEED = 0.0001;
 	// The steps driving the vehicles per iteration
-	private final static double SPEED = Vehicle.getSpeed();
+	private final static double SPEED = Vehicle.getSPEED();
 
 	// current Location
 	private Location currentLocation;
@@ -39,7 +41,7 @@ public abstract class Vehicle extends Simulation {
 			JsonObject event = vl.asJson();
 			addMetainformationWhenPublishLocation(event);
 			// Publish event to IoT
-			getDeviceClient().publishEvent(VehicleLocation.EVENT, event, 1);
+			getDeviceClient().publishEventOverHTTP(VehicleLocation.EVENT, event);
 			//System.out.println(event);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -63,69 +65,67 @@ public abstract class Vehicle extends Simulation {
 
 	protected void driveToDestination(Location destination, Interruption interruption) {
 		// Calculate the route between the current and destination location
+
 		GHResponse response = RouteCalculator.getInstance().calculateRoute(currentLocation.getLatitude(),
 				currentLocation.getLongitude(), destination.getLatitude(), destination.getLongitude());
 
 		int i = 0;
+		long millis = DateTime.now().getMillis();
+		long previousMillis = millis;
+		
 		if (response.getPoints() != null) {
 
 			while (response.getPoints().getSize() > i) {
-
+			
 				double nextPointLatitude = response.getPoints().getLatitude(i);
 				double nextpointLongitude = response.getPoints().getLongitude(i);
 
-				// Take the difference between current location and the
-				// destination
-				double distLat = currentLocation.getLatitude() - nextPointLatitude;
-				double distLong = currentLocation.getLongitude() - nextpointLongitude;
-
+				// Take the difference between current location and the destination
+				double distLat = nextPointLatitude - currentLocation.getLatitude();
+				double distLong = nextpointLongitude - currentLocation.getLongitude();
+				
 				// While the difference is bigger than the threshold x
-				//int j = 0;
 				while ((Math.abs(distLat) > DIST_LAT_LONG || Math.abs(distLong) > DIST_LAT_LONG)) {
-					// check if we have to move in lat direction
-					if (Math.abs(distLat) > DIST_LAT_LONG) {
-						// go xxx steps in direction
-						if (distLat < 0) {
-							currentLocation.setLatitude(currentLocation.getLatitude() + SPEED);
-						} else {
-							currentLocation.setLatitude(currentLocation.getLatitude() - SPEED);
-						}
+						
+					double absVec = Math.sqrt((distLat * distLat) + (distLong * distLong));
+					double factor = SPEED / absVec;
+
+					if (factor > 1) {
+						factor = 1;
 					}
-					// check if we have to move in long direction
-					if (Math.abs(distLong) > DIST_LAT_LONG) {
-						if (distLong < 0) {
-							currentLocation.setLongitude(currentLocation.getLongitude() + SPEED);
-						} else {
-							currentLocation.setLongitude(currentLocation.getLongitude() - SPEED);
-						}
-					}
+
+					currentLocation.setLatitude(currentLocation.getLatitude() + (distLat * factor));
+					currentLocation.setLongitude(currentLocation.getLongitude() + (distLong * factor));
 
 					try {
-						try {
-							Thread.sleep(20);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						//if (j % 2 == 0)
 						this.publishLocation();
-
-						if (interruption.interrupt()) {
-							System.out.println("Driving interrupted");
-							return;
-						}
 
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					distLat = currentLocation.getLatitude() - nextPointLatitude;
-					distLong = currentLocation.getLongitude() - nextpointLongitude;
 					
-					//j++;
+					if (interruption.interrupt()) {
+						System.out.println("Driving interrupted");
+						return;
+					}
 
+					distLat = nextPointLatitude - currentLocation.getLatitude();
+					distLong = nextpointLongitude - currentLocation.getLongitude();
+					
+					try {
+						// whatever time has passed so far, wait until 1s has passed
+						millis = DateTime.now().getMillis();
+						long diffMillies = millis - previousMillis;
+						if (diffMillies < 1000) {
+							// System.out.println("Sleeping :" + (1000 - diffMillies) + "ms");
+							Thread.sleep(1000 - diffMillies);
+						}
+						
+						previousMillis = DateTime.now().getMillis();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
-				currentLocation.setLatitude(nextPointLatitude);
-				currentLocation.setLongitude(nextpointLongitude);
 
 				i = i + 1;
 			}
@@ -145,10 +145,10 @@ public abstract class Vehicle extends Simulation {
 
 	}
 
-	public static double getSpeed() {
-		String speed = System.getenv("SPEED");
-		if (speed != null) {
-			return Double.valueOf(speed);
+	public static double getSPEED() {
+		String SPEED = System.getenv("SPEED");
+		if (SPEED != null) {
+			return Double.valueOf(SPEED);
 		} else {
 			return DEFAULT_SPEED;
 		}
