@@ -1,8 +1,8 @@
 package com.capgemini.hackathon.device.simulation.bo;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.capgemini.hackathon.device.simulation.DeviceClientConfig;
 import com.capgemini.hackathon.device.simulation.model.Emergency;
@@ -29,7 +29,7 @@ public class Hospital extends Simulation {
 
 	public static final String HOSPITAL_ID = "Hospital_Kings_Cross";
 
-	private List<Emergency> emergencies = new LinkedList<Emergency>();
+	private List<Emergency> emergencies = new CopyOnWriteArrayList<Emergency>();
 
 	public Hospital(DeviceClientConfig deviceClientConfig, Object id) {
 		super(deviceClientConfig, HOSPITAL_ID);
@@ -46,7 +46,7 @@ public class Hospital extends Simulation {
 		while (true) {
 			try {
 				Thread.sleep(2000);
-				//System.out.println("Check for emergencies");
+
 				synchronized (emergencies) {
 					for (Emergency emergency : emergencies) {
 						publishEmergency(emergency);
@@ -81,7 +81,7 @@ public class Hospital extends Simulation {
 		try {
 			// Publish event to IoT
 			getDeviceClient().publishEvent(Emergency.EVENT_LOCATION, emergency.asJson());
-			System.out.println("Hospital: emergency " + emergency.getEmergencyId() + " ongoing ");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
