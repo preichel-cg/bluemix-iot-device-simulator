@@ -45,7 +45,7 @@ public class Hospital extends Simulation {
 	protected void process() {
 		while (true) {
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(500);
 
 				synchronized (emergencies) {
 					for (Emergency emergency : emergencies) {
@@ -80,7 +80,7 @@ public class Hospital extends Simulation {
 	private void publishEmergency(Emergency emergency) {
 		try {
 			// Publish event to IoT
-			getDeviceClient().publishEvent(Emergency.EVENT_LOCATION, emergency.asJson());
+			getDeviceClient().publishEventOverHTTP(Emergency.EVENT_LOCATION, emergency.asJson());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -147,16 +147,18 @@ public class Hospital extends Simulation {
 		}
 
 		private void handleNewEmergency(String latitude, String longtitude) {
+			
 			// new emergency
 			Emergency emergency = new Emergency();
 			emergency.setEmergencyId(UUID.randomUUID().toString());
 			emergency.setLocation(new Location(Double.valueOf(latitude), Double.valueOf(longtitude)));
 
-			synchronized (emergencies) {
-				emergencies.add(emergency);
-				System.out.println("Hospital: Emergency " + emergency.getEmergencyId() + " happend");
+			System.out.println("Hospital: Emergency " + emergency.getEmergencyId() + " happend");
 
-			}
+			//synchronized (emergencies) {
+				emergencies.add(emergency);
+				System.out.println("Hospital: Emergency " + emergency.getEmergencyId() + " added to emergency list");
+			//}
 
 		}
 
