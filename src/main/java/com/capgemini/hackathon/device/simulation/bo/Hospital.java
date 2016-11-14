@@ -80,7 +80,7 @@ public class Hospital extends Simulation {
 	private void publishEmergency(Emergency emergency) {
 		try {
 			// Publish event to IoT
-			getDeviceClient().publishEventOverHTTP(Emergency.EVENT_LOCATION, emergency.asJson());
+			getDeviceClient().publishEvent(Emergency.EVENT_LOCATION, emergency.asJson());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -41,7 +41,7 @@ public abstract class Vehicle extends Simulation {
 			JsonObject event = vl.asJson();
 			addMetainformationWhenPublishLocation(event);
 			// Publish event to IoT
-			getDeviceClient().publishEventOverHTTP(VehicleLocation.EVENT, event);
+			getDeviceClient().publishEvent(VehicleLocation.EVENT, event);
 			//System.out.println(event);
 		} catch (Exception e) {
 			e.printStackTrace();
