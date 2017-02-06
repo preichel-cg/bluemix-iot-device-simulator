@@ -20,6 +20,14 @@ public class DeviceSimulator {
 
 	public static void main(String... args) throws Exception {
 
+		try {
+			drive();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void drive() throws Exception {
 		ExecutorCompletionService<String> executor = new ExecutorCompletionService<String>(
 				Executors.newCachedThreadPool());
 		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.properties");

@@ -5,6 +5,10 @@ package com.capgemini.hackathon.device.simulation.routing;
  */
 public class MapCoordinatePoint {
 	
+	// Latitude of a hospital 
+	public static double pointHospitalLatitude = 51.528220;
+	public static double pointHospitalLongitude = -0.091153;
+	
 	//Latitude of lower right point on the map 
 	public static double pointDownRightLatitude = 51.52642124957741;
 	
