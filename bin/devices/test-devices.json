@@ -5,7 +5,7 @@
 	"clientId": "d:876fe7:car-simulator:car0",
 	"typeId": "car-simulator",
 	"deviceId": "car0",
-	"apiToken": "91276D24-8F04-489F-AEED-3837C367F52C"
+	"apiToken": "CAE8674A-8B27-4539-83F4-257466A2C5F8"
 },{
 	"simulatorClazz": "com.capgemini.hackathon.device.simulation.bo.Car",
 	"id": "car1",
@@ -13,7 +13,7 @@
 	"clientId": "d:876fe7:car-simulator:car1",
 	"typeId": "car-simulator",
 	"deviceId": "car1",
-	"apiToken": "679CEF96-42F1-414B-9512-1D8674A30EAC"
+	"apiToken": "D4C4A59F-FCA6-4EAA-B07E-C77E3702BF7C"
 },{
 	"simulatorClazz": "com.capgemini.hackathon.device.simulation.bo.Car",
 	"id": "car2",
@@ -21,7 +21,7 @@
 	"clientId": "d:876fe7:car-simulator:car2",
 	"typeId": "car-simulator",
 	"deviceId": "car2",
-	"apiToken": "271FE535-87ED-4447-A058-2E169CE43A4F"
+	"apiToken": "048CFDD6-02F3-4B9B-B3EB-7BC4BDB929E5"
 },{
 	"simulatorClazz": "com.capgemini.hackathon.device.simulation.bo.Car",
 	"id": "car3",
@@ -29,7 +29,7 @@
 	"clientId": "d:876fe7:car-simulator:car3",
 	"typeId": "car-simulator",
 	"deviceId": "car3",
-	"apiToken": "206C5228-3D35-47BD-8840-405FA99CA8C9"
+	"apiToken": "1ED30408-5B03-4869-96F1-191050703335"
 },{
 	"simulatorClazz": "com.capgemini.hackathon.device.simulation.bo.Car",
 	"id": "car4",
@@ -37,7 +37,7 @@
 	"clientId": "d:876fe7:car-simulator:car4",
 	"typeId": "car-simulator",
 	"deviceId": "car4",
-	"apiToken": "053294A6-46CA-44D0-AE02-D2BF276A53A4"
+	"apiToken": "8025B588-B5C3-47C7-AA82-5A95BD7577C8"
 },{
 	"simulatorClazz": "com.capgemini.hackathon.device.simulation.bo.Ambulance",
 	"id": "ambulance0",
@@ -45,7 +45,7 @@
 	"clientId": "d:876fe7:ambulance-simulator:ambulance0",
 	"typeId": "ambulance-simulator",
 	"deviceId": "ambulance0",
-	"apiToken": "CEE169AA-787E-4E7C-8367-1B335D6B78C7"
+	"apiToken": "DFF2309A-3514-4736-9201-1EAC6C8FA60D"
 },{
 	"simulatorClazz": "com.capgemini.hackathon.device.simulation.bo.Ambulance",
 	"id": "ambulance1",
@@ -53,7 +53,7 @@
 	"clientId": "d:876fe7:ambulance-simulator:ambulance1",
 	"typeId": "ambulance-simulator",
 	"deviceId": "ambulance1",
-	"apiToken": "3F22566E-8EB0-45CA-A86B-4959CAAB1258"
+	"apiToken": "5D3C8512-1BA4-4986-AF29-24A7CE01D9AA"
 },{
 	"simulatorClazz": "com.capgemini.hackathon.device.simulation.bo.Ambulance",
 	"id": "ambulance2",
@@ -61,7 +61,7 @@
 	"clientId": "d:876fe7:ambulance-simulator:ambulance2",
 	"typeId": "ambulance-simulator",
 	"deviceId": "ambulance2",
-	"apiToken": "7F3FA0A6-1ABA-48A0-93FB-68638874122E"
+	"apiToken": "5EC59625-C4CC-42D7-963F-4A93329752A4"
 },{
 	"simulatorClazz": "com.capgemini.hackathon.device.simulation.bo.Hospital",
 	"id": "hospital",
@@ -69,5 +69,5 @@
 	"clientId": "d:876fe7:hospital:hospital1",
 	"typeId": "hospital",
 	"deviceId": "hospital1",
-	"apiToken": "425D5127-EF97-4A23-8B96-909FADB7BEB0"
+	"apiToken": "3992129C-FE5F-4B37-A6B9-1BCFAD2C1984"
 }]
