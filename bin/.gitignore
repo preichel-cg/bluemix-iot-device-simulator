@@ -1,1 +1,3 @@
 /devices/
+/com/
+*.class
