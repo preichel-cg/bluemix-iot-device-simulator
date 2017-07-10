@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 
 import com.capgemini.hackathon.device.simulation.DeviceClientConfig;
 import com.capgemini.hackathon.device.simulation.model.Location;
+import com.capgemini.hackathon.device.simulation.model.Route;
 import com.capgemini.hackathon.device.simulation.model.VehicleLocation;
 import com.capgemini.hackathon.device.simulation.routing.MapCoordinatePoint;
 import com.capgemini.hackathon.device.simulation.routing.RouteCalculator;
@@ -24,6 +25,8 @@ public abstract class Vehicle extends Simulation {
 	private Location currentLocation;
 	// destination Location
 	private Location destination;
+	// route Information
+	private Route route;
 
 	public Vehicle(DeviceClientConfig deviceClientConfig, Location location, Object id) {
 		super(deviceClientConfig, id);
@@ -48,6 +51,15 @@ public abstract class Vehicle extends Simulation {
 			e.printStackTrace();
 		}
 
+	}
+
+	protected void publishRoute() {
+		try {
+			JsonObject JsonRoute = route.asJson();
+			getDeviceClient().publishEvent(Route.EVENT, JsonRoute);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Location getCurrentLocation() {
@@ -91,6 +103,13 @@ public abstract class Vehicle extends Simulation {
 			return;
 		}
 		
+		route = Route.fromGHRes(this.getId().toString(), response);
+		try {
+			this.publishRoute();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		int i = 0;
 		long millis = DateTime.now().getMillis();
 		long previousMillis = millis;
